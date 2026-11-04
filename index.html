@@ -128,7 +128,7 @@ button{font:inherit;cursor:pointer}
     <button class="btn" id="clear" type="button">Clear</button></div>
     <div class="voicebar">
       <label for="voice">Voice</label><select id="voice"><option value="">Default Chinese voice</option></select>
-      <label for="rate">Speed</label><select id="rate"><option value="0.2">Very slow</option><option value="0.4">Slow</option><option value="0.6" selected>Medium</option><option value="0.8">Normal</option><option value="1">Fast</option></select>
+      <label for="rate">Speed</label><select id="rate"><option value="0.4">Very slow</option><option value="0.6">Slow</option><option value="0.8" selected>Medium</option><option value="1">Normal</option><option value="1.2">Fast</option></select>
       <label class="chk"><input type="checkbox" id="twice" checked> Say it twice</label>
     </div>
     <p class="example" id="example"></p>
@@ -308,7 +308,7 @@ function loadVoices(){
   if(saved&&voices.some(v=>v.name===saved))sel.value=saved;
 }
 if("speechSynthesis" in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
-{const r=store.get("rate");if(["0.2","0.4","0.6","0.8","1"].includes(r))$("rate").value=r;const t=store.get("twice");if(t)$("twice").checked=t==="1"}
+{const r=store.get("rate");if(["0.4","0.6","0.8","1","1.2"].includes(r))$("rate").value=r;const t=store.get("twice");if(t)$("twice").checked=t==="1"}
 $("voice").onchange=e=>store.set("voice",e.target.value);
 $("rate").onchange=e=>store.set("rate",e.target.value);
 $("twice").onchange=e=>store.set("twice",e.target.checked?"1":"0");
@@ -323,7 +323,7 @@ function speak(){
   if(!("speechSynthesis" in window)){$("note").textContent="This browser has no speech feature. Try Chrome or Edge.";return}
   if(!voices.length)loadVoices();
   const v=voices.find(x=>x.name===$("voice").value)||voices[0];
-  const rate=parseFloat($("rate").value)||0.6;
+  const rate=parseFloat($("rate").value)||0.8;
   speechSynthesis.cancel();
   /* the full stop gives the voice a complete, falling sentence end, so short tones are not clipped */
   const text=c.ch+"。";
