@@ -35,7 +35,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:15p
 header{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px}
 h1{margin:0;font-family:var(--f-card);font-weight:700;font-size:clamp(26px,5vw,36px);line-height:1.1;text-wrap:balance}
 h1 small{display:block;font-family:var(--f-ui);font-size:14px;font-weight:500;color:var(--muted);margin-top:4px}
-.tools{display:flex;gap:8px;flex-wrap:wrap}
+.tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 button{font:inherit;cursor:pointer}
 .btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 16px;font-weight:500}
 .btn:hover{border-color:var(--muted)}
@@ -99,10 +99,6 @@ button{font:inherit;cursor:pointer}
 <div class="wrap">
   <header>
     <h1>拼音翻翻牌<small>Pinyin Cards · initials + finals + tones</small></h1>
-    <div class="tools">
-      <button class="btn primary" id="drawAll" type="button">Deal all three</button>
-      <button class="btn" id="clear" type="button">Clear</button>
-    </div>
   </header>
 
   <section class="table" aria-label="Card decks">
@@ -126,8 +122,10 @@ button{font:inherit;cursor:pointer}
   <section class="result" aria-live="polite">
     <div class="eq" id="eq"></div>
     <div class="answer hidden" id="answer">?</div>
-    <div class="tools"><button class="btn" id="reveal" type="button">Show answer</button>
-    <button class="btn" id="speak" type="button">🔊 Pronounce</button></div>
+    <div class="tools"><button class="btn primary" id="drawAll" type="button">Deal all three</button>
+    <button class="btn" id="reveal" type="button">Show answer</button>
+    <button class="btn" id="speak" type="button">🔊 Pronounce</button>
+    <button class="btn" id="clear" type="button">Clear</button></div>
     <div class="voicebar">
       <label for="voice">Voice</label><select id="voice"><option value="">Default Chinese voice</option></select>
       <label for="rate">Speed</label><select id="rate"><option value="0.2">Very slow</option><option value="0.4">Slow</option><option value="0.6" selected>Medium</option><option value="0.8">Normal</option></select>
