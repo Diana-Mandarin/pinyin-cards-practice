@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>html{color-scheme:light}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>拼音翻翻牌 Pinyin Cards</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* Layout: a classroom card table — three decks side by side, drawn cards below each, the combined syllable at the bottom */
+:root{
+  --bg:#eef2ee; --surface:#ffffff; --ink:#1d2a2b; --muted:#5d6b6a; --line:#cfd9d5;
+  --ini:#2f5fa8; --ini-soft:#dfe8f6;
+  --fin:#1f8a6d; --fin-soft:#d9efe7;
+  --ton:#d0582e; --ton-soft:#f8e2d8;
+  --shadow:0 1px 0 rgba(29,42,43,.08),0 6px 18px rgba(29,42,43,.10);
+  --f-card:"Andika","Noto Sans","Segoe UI",system-ui,sans-serif;
+  --f-ui:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141b1c; --surface:#1f2829; --ink:#eef3f1; --muted:#9fb0ad; --line:#33403f;
+  --ini:#7fa6e8; --ini-soft:#22324b; --fin:#5cc8a6; --fin-soft:#1b3a31; --ton:#f08a62; --ton-soft:#43281d;
+  --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141b1c; --surface:#1f2829; --ink:#eef3f1; --muted:#9fb0ad; --line:#33403f;
+  --ini:#7fa6e8; --ini-soft:#22324b; --fin:#5cc8a6; --fin-soft:#1b3a31; --ton:#f08a62; --ton-soft:#43281d;
+  --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.35); color-scheme:dark}
+
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:15px;line-height:1.5}
+.wrap{max-width:860px;margin:0 auto;padding-block:28px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:24px}
+header{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px}
+h1{margin:0;font-family:var(--f-card);font-weight:700;font-size:clamp(26px,5vw,36px);line-height:1.1;text-wrap:balance}
+h1 small{display:block;font-family:var(--f-ui);font-size:14px;font-weight:500;color:var(--muted);margin-top:4px}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 16px;font-weight:500}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+:focus-visible{outline:3px solid var(--ini);outline-offset:3px}
+
+.table{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(10px,3vw,28px)}
+.col{display:flex;flex-direction:column;align-items:center;gap:14px;min-width:0}
+.col-label{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-align:center}
+.col-label span{display:block;font-size:12px;letter-spacing:0;text-transform:none;font-weight:400;color:var(--muted)}
+.ini{--c:var(--ini);--soft:var(--ini-soft)} .fin{--c:var(--fin);--soft:var(--fin-soft)} .ton{--c:var(--ton);--soft:var(--ton-soft)}
+.col-label{color:var(--c)}
+
+/* deck pile */
+.deck{position:relative;width:100%;max-width:170px;aspect-ratio:5/7;border:0;padding:0;background:transparent}
+.deck::before,.deck::after,.deck .top{content:"";position:absolute;inset:0;border-radius:14px;background:var(--c);
+  background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.13) 0 6px,transparent 6px 14px);box-shadow:var(--shadow)}
+.deck::before{transform:translate(6px,6px);opacity:.45}
+.deck::after{transform:translate(3px,3px);opacity:.7}
+.deck .top{z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#fff;
+  transition:transform .15s ease}
+.deck:hover .top{transform:translateY(-3px)}
+.deck:active .top{transform:translateY(1px)}
+.deck .top b{font-family:var(--f-card);font-size:clamp(22px,5vw,34px)}
+.deck .top i{font-style:normal;font-size:12px;opacity:.9}
+.deck .count{position:absolute;z-index:2;right:8px;bottom:6px;color:#fff;font-size:11px;opacity:.85;font-variant-numeric:tabular-nums}
+
+/* drawn card */
+.slot{position:relative;width:100%;max-width:170px;aspect-ratio:5/7;border-radius:14px;border:2px dashed var(--line);
+  display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;text-align:center;padding:8px}
+.card{position:absolute;inset:-2px;border-radius:14px;background:var(--surface);border:2px solid var(--c);box-shadow:var(--shadow);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;animation:flip .35s ease}
+.card .big{font-family:var(--f-card);font-weight:400;font-size:clamp(34px,9vw,64px);line-height:1;color:var(--ink)}
+.card .sub{font-size:12px;color:var(--muted);text-align:center;padding:0 6px}
+.card .x{position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:50%;border:0;background:var(--soft);color:var(--c);font-size:16px;line-height:1}
+@keyframes flip{from{transform:perspective(600px) rotateY(80deg);opacity:.2}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion: reduce){.card{animation:none}.deck .top{transition:none}}
+
+/* result */
+.result{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px clamp(16px,4vw,28px);
+  display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center}
+.eq{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;font-family:var(--f-card);font-size:clamp(18px,4vw,24px)}
+.chip{padding:2px 12px;border-radius:8px;background:var(--soft);color:var(--c)}
+.chip.empty{background:transparent;border:1px dashed var(--line);color:var(--muted);font-family:var(--f-ui);font-size:14px}
+.op{color:var(--muted)}
+.answer{font-family:var(--f-card);font-weight:700;font-size:clamp(56px,16vw,104px);line-height:1;min-height:1em;letter-spacing:.01em}
+.answer.hidden{color:transparent;text-shadow:0 0 18px var(--muted);user-select:none}
+.note{max-width:60ch;color:var(--muted);font-size:14px;margin:0}
+.note:empty{display:none}
+.example{margin:0;font-size:15px;color:var(--muted)}.example b{font-size:28px;color:var(--ink);font-weight:500;margin-left:6px}.example:empty{display:none}
+.voicebar{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px 10px;font-size:13px;color:var(--muted)}
+.voicebar select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:4px 8px;max-width:100%}
+.voicebar .chk{display:flex;align-items:center;gap:4px}
+.howto{color:var(--muted);font-size:13px;margin:0;max-width:65ch}
+@media (max-width:440px){.card .sub{font-size:10px}.deck .top i{display:none}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <h1>拼音翻翻牌<small>Pinyin Cards · initials + finals + tones</small></h1>
+    <div class="tools">
+      <button class="btn primary" id="drawAll" type="button">Deal all three</button>
+      <button class="btn" id="clear" type="button">Clear</button>
+    </div>
+  </header>
+
+  <section class="table" aria-label="Card decks">
+    <div class="col ini">
+      <div class="col-label">Initials<span>聲母</span></div>
+      <button class="deck" id="deck-ini" type="button" aria-label="Draw an initial"><span class="top"><b>b p m</b><i>tap to draw</i></span><span class="count" id="n-ini"></span></button>
+      <div class="slot" id="slot-ini">empty</div>
+    </div>
+    <div class="col fin">
+      <div class="col-label">Finals<span>韻母</span></div>
+      <button class="deck" id="deck-fin" type="button" aria-label="Draw a final"><span class="top"><b>a o e</b><i>tap to draw</i></span><span class="count" id="n-fin"></span></button>
+      <div class="slot" id="slot-fin">empty</div>
+    </div>
+    <div class="col ton">
+      <div class="col-label">Tones<span>聲調</span></div>
+      <button class="deck" id="deck-ton" type="button" aria-label="Draw a tone"><span class="top"><b>ˉ ˊ ˇ ˋ ˙</b><i>tap to draw</i></span><span class="count" id="n-ton"></span></button>
+      <div class="slot" id="slot-ton">empty</div>
+    </div>
+  </section>
+
+  <section class="result" aria-live="polite">
+    <div class="eq" id="eq"></div>
+    <div class="answer hidden" id="answer">?</div>
+    <div class="tools"><button class="btn" id="reveal" type="button">Show answer</button>
+    <button class="btn" id="speak" type="button">🔊 Pronounce</button></div>
+    <div class="voicebar">
+      <label for="voice">Voice</label><select id="voice"><option value="">Default Chinese voice</option></select>
+      <label for="rate">Speed</label><select id="rate"><option value="0.2">Very slow</option><option value="0.4">Slow</option><option value="0.6" selected>Medium</option><option value="0.8">Normal</option></select>
+      <label class="chk"><input type="checkbox" id="twice" checked> Say it twice</label>
+    </div>
+    <p class="example" id="example"></p>
+    <p class="note" id="note"></p>
+  </section>
+
+  <p class="howto">Tap any deck to draw a card. Every new card fits the cards already on the table, so the three always make a real syllable. Tap a deck again to swap that card, or × to put it back. Students read it aloud first, then tap "Show answer" or "Pronounce" to check. The voice reads an example character, so it uses your device's Chinese voice.</p>
+</div>
+
+<script>
+const G="a e u ai ei ao ou an en ang eng ong ua uo uai ui uan un uang";
+const JQX="i ü ia ie iao iu ian in iang ing iong üe üan ün";
+const VALID={
+  b:"a o i u ai ei ao an en ang eng ie iao ian in ing",
+  p:"a o i u ai ei ao ou an en ang eng ie iao ian in ing",
+  m:"a o e i u ai ei ao ou an en ang eng ie iao iu ian in ing",
+  f:"a o u ei ou an en ang eng",
+  d:"a e i u ai ei ao ou an ang eng ong ie iao iu ian ing uo ui uan un",
+  t:"a e i u ai ao ou an ang eng ong ie iao ian ing uo ui uan un",
+  n:"a e i u ü ai ei ao ou an en ang eng ong ie iao iu ian in iang ing uo uan üe",
+  l:"a e i u ü ai ei ao ou an ang eng ong ia ie iao iu ian in iang ing uo uan un üe",
+  g:G,k:G,h:G, j:JQX,q:JQX,x:JQX,
+  zh:"a e i u ai ei ao ou an en ang eng ong ua uo uai ui uan un uang",
+  ch:"a e i u ai ao ou an en ang eng ong uo uai ui uan un uang",
+  sh:"a e i u ai ei ao ou an en ang eng ua uo uai ui uan un uang",
+  r:"e i u ao ou an en ang eng ong uo ui uan un",
+  z:"a e i u ai ei ao ou an en ang eng ong uo ui uan un",
+  c:"a e i u ai ao ou an en ang eng ong uo ui uan un",
+  s:"a e i u ai ao ou an en ang eng ong uo ui uan un",
+  y:"i in ing a e ao ou an ang ong ü üe üan ün",
+  w:"u a o ai ei an en ang eng",
+  "":"a o e ai ao ou an en ang er"
+};
+for(const k in VALID) VALID[k]=VALID[k].split(" ");
+const INITIALS=["b","p","m","f","d","t","n","l","g","k","h","j","q","x","zh","ch","sh","r","z","c","s","y","w",""];
+const FINALS=["a","o","e","i","u","ü","ai","ei","ao","ou","an","en","ang","eng","ong","er","ia","ie","iao","iu","ian","in","iang","ing","iong","ua","uo","uai","ui","uan","un","uang","üe","üan","ün"];
+const TONES=[
+  {n:1,mark:"ˉ",label:"1st tone · 一聲"},{n:2,mark:"ˊ",label:"2nd tone · 二聲"},
+  {n:3,mark:"ˇ",label:"3rd tone · 三聲"},{n:4,mark:"ˋ",label:"4th tone · 四聲"},
+  {n:5,mark:"˙",label:"neutral · 輕聲"}];
+
+/* Example characters (Taiwan readings), tones 1–4; "_" = no common character */
+const CHARS=`ba:八拔把爸 bo:波伯跛_ bi:逼鼻筆必 bu:__補布 bai:掰白百拜 bei:杯_北被 bao:包雹飽抱 ban:班_板半 ben:奔_本笨 bang:幫_綁棒 beng:崩__蹦 bie:憋別__ biao:標_表_ bian:邊_扁變 bin:賓___ bing:冰_餅病
+pa:趴爬_怕 po:坡婆叵破 pi:批皮痞屁 pu:撲葡普瀑 pai:拍牌_派 pei:胚陪_配 pao:拋袍跑泡 pou:__剖_ pan:攀盤_盼 pen:噴盆__ pang:乓旁_胖 peng:烹朋捧碰 pie:撇___ piao:飄瓢_票 pian:篇__騙 pin:拼貧品聘 ping:乒瓶__
+ma:媽麻馬罵 mo:摸磨抹墨 mi:瞇迷米密 mu:__母木 mai:_埋買賣 mei:_梅美妹 mao:貓毛_帽 mou:_謀某_ man:_饅滿慢 men:_門_悶 mang:_忙莽_ meng:_盟猛夢 mie:___滅 miao:喵苗秒廟 miu:___謬 mian:_棉免面 min:_民敏_ ming:_明_命
+fa:發罰法_ fo:_佛__ fu:夫服府父 fei:飛肥匪費 fou:__否_ fan:帆煩反飯 fen:分墳粉份 fang:方房紡放 feng:風逢諷鳳
+da:搭答打大 de:_德__ di:低敵底地 du:嘟毒賭度 dai:呆_歹帶 dao:刀_島到 dou:兜_抖豆 dan:單_膽蛋 dang:噹_黨蕩 deng:燈_等凳 dong:東_懂動 die:爹碟__ diao:刁__掉 diu:丟___ dian:顛_點電 ding:叮_頂定 duo:多奪躲剁 dui:堆__對 duan:端_短斷 dun:蹲__頓
+ta:他_塔踏 te:___特 ti:梯題體替 tu:禿圖土兔 tai:胎台_太 tao:掏桃討套 tou:偷頭_透 tan:貪談毯炭 tang:湯糖躺燙 teng:_疼__ tong:通同桶痛 tie:貼_鐵_ tiao:_條_跳 tian:天甜舔_ ting:聽停挺_ tuo:拖駝妥_ tui:推_腿退 tuan:_團__ tun:吞屯__
+na:_拿哪那 ni:_泥你逆 nu:_奴努怒 nü:__女_ nai:__奶耐 nei:__餒內 nao:_撓腦鬧 nan:_男__ nen:___嫩 nang:_囊__ neng:_能__ nong:_農_弄 nie:捏__聶 niao:__鳥尿 niu:_牛扭_ nian:_年_念 nin:_您__ niang:_娘__ ning:_寧__ nuo:_挪_諾 nuan:__暖_ nüe:___虐
+la:拉__辣 li:_梨李力 lu:_爐魯路 lü:_驢旅綠 lai:_來_賴 lei:_雷壘淚 lao:撈勞老_ lou:_樓簍漏 lan:_藍懶爛 lang:_狼朗浪 leng:__冷愣 long:_龍__ lia:__倆_ lie:___列 liao:_聊_料 liu:溜流柳六 lian:_連臉練 lin:_林__ liang:_涼兩亮 ling:_零領另 luo:_鑼_洛 luan:__卵亂 lun:_輪_論 lüe:___略
+ga:嘎___ ge:哥格_個 gu:姑_古故 gai:該_改蓋 gei:__給_ gao:高_搞告 gou:溝_狗夠 gan:甘_趕幹 gen:根___ gang:剛_港_ geng:耕_梗_ gong:工_拱共 gua:瓜_寡掛 guo:鍋國果過 guai:乖_拐怪 gui:龜_鬼貴 guan:關_管慣 gun:__滾棍 guang:光_廣逛
+ka:咖_卡_ ke:科咳渴課 ku:哭_苦褲 kai:開_凱_ kao:__考靠 kou:摳_口扣 kan:刊_砍看 ken:__肯_ kang:康__抗 keng:坑___ kong:__恐控 kua:誇_垮跨 kuo:___闊 kuai:___快 kui:虧葵_愧 kuan:寬_款_ kun:__捆困 kuang:筐狂_況
+ha:哈___ he:喝河_賀 hu:呼湖虎戶 hai:_孩海害 hei:黑___ hao:_豪_耗 hou:_猴吼後 han:憨寒喊汗 hen:_痕很恨 hang:_航__ heng:哼橫__ hong:轟紅__ hua:花滑_畫 huo:_活火貨 huai:_懷_壞 hui:灰回毀惠 huan:歡環緩換 hun:昏魂__ huang:慌黃謊_
+ji:雞急擠記 ju:居局舉句 jia:家_甲價 jie:街節姐借 jiao:交_腳叫 jiu:揪_九舊 jian:尖_剪見 jin:金_緊近 jiang:江_講醬 jing:經_井靜 jiong:__窘_ jue:_決__ juan:捐_捲倦 jun:軍__俊
+qi:七騎起氣 qu:區渠取去 qia:掐__恰 qie:_茄且竊 qiao:敲橋巧俏 qiu:秋球__ qian:千錢淺欠 qin:親琴寢_ qiang:槍牆搶_ qing:青晴請慶 qiong:_窮__ que:缺瘸_確 quan:圈全犬勸 qun:_群__
+xi:西習洗細 xu:需徐許序 xia:蝦霞_下 xie:些鞋寫謝 xiao:消_小笑 xiu:修__秀 xian:先鹹險現 xin:心__信 xiang:香詳想象 xing:星型醒姓 xiong:胸熊__ xue:靴學雪_ xuan:宣玄選_ xun:熏尋_訓
+zha:渣閘眨詐 zhe:遮哲者這 zhi:知直紙至 zhu:豬竹主住 zhai:摘宅窄債 zhao:招_找照 zhou:州軸肘晝 zhan:沾_展站 zhen:真_枕震 zhang:張_掌帳 zheng:蒸_整正 zhong:鐘_腫眾 zhua:抓___ zhuo:桌濁__ zhui:追__墜 zhuan:磚__賺 zhun:__準_ zhuang:裝__撞
+cha:插茶_岔 che:車_扯徹 chi:吃池尺赤 chu:出除楚觸 chai:拆柴__ chao:超潮吵_ chou:抽愁醜臭 chan:_蟬產_ chen:_沉_趁 chang:昌常廠唱 cheng:撐城_秤 chong:充蟲寵_ chuo:戳___ chui:吹錘__ chuan:穿船喘串 chun:春純蠢_ chuang:窗床闖創
+sha:沙_傻_ she:奢蛇捨社 shi:獅十使是 shu:書熟鼠樹 shai:篩__曬 shei:_誰__ shao:燒勺_紹 shou:收_手瘦 shan:山_閃善 shen:深神審慎 shang:傷_賞上 sheng:生繩省剩 shua:刷_耍_ shuo:說__碩 shuai:摔_甩帥 shui:__水睡 shuan:拴__涮 shun:___順 shuang:雙_爽_
+re:__惹熱 ri:___日 ru:_如乳入 rao:_饒擾繞 rou:_柔_肉 ran:_然染_ ren:_人忍認 rang:___讓 reng:扔仍__ rong:_容__ ruo:___弱 rui:___瑞 ruan:__軟_ run:___潤
+za:_雜__ ze:_責__ zi:資_紫字 zu:租族祖_ zai:災_宰在 zei:_賊__ zao:糟_早造 zou:__走揍 zan:_咱_讚 zen:__怎_ zang:髒__葬 zeng:增__贈 zong:宗_總粽 zuo:_昨左坐 zui:__嘴最 zun:尊___
+ca:擦___ ce:___測 ci:_詞此次 cu:粗__醋 cai:猜才彩菜 cao:操槽草_ cou:___湊 can:餐殘慘燦 cang:倉___ ceng:_層_蹭 cong:聰從__ cuo:搓__錯 cui:催__脆 cuan:___竄 cun:村存_寸
+sa:___薩 se:___色 si:絲_死四 su:蘇俗_素 sai:腮__賽 sao:騷_嫂_ sou:搜___ san:三_傘_ sen:森___ sang:桑_嗓_ seng:僧___ song:松__送 suo:縮_鎖_ sui:_隨_歲 suan:酸__算 sun:孫_損_
+yi:衣姨椅意 wu:屋無五霧 yu:迂魚雨玉 ya:鴨牙啞亞 ye:椰爺野夜 yao:腰搖咬藥 you:優油有又 yan:煙鹽眼宴 yin:音銀引印 yang:央羊養樣 ying:英贏影硬 yong:庸_永用 wa:挖娃瓦襪 wo:窩_我握 wai:歪__外 wei:威圍尾胃 wan:灣完晚萬 wen:溫文穩問 wang:汪王往忘 weng:翁__甕 yue:約__月 yuan:冤元遠院 yun:暈雲允運`;
+/* Neutral tone happens on particles and suffixes, so only these syllables get it */
+const NEUTRAL={a:"啊",de:"的",le:"了",ma:"嗎",ne:"呢",ba:"吧",me:"麼",la:"啦",ya:"呀"};
+const CHAR={};
+for(const tok of CHARS.split(/\s+/)){const [syl,cs]=tok.split(":");[...cs].forEach((c,k)=>{if(c!=="_")CHAR[syl+(k+1)]=c})}
+CHAR.a1="阿";CHAR.o1="喔";Object.assign(CHAR,{e2:"鵝",e3:"噁",e4:"餓",ai1:"哀",ai2:"癌",ai3:"矮",ai4:"愛",ao1:"凹",ao2:"熬",ao3:"襖",ao4:"奧",ou1:"歐",ou3:"偶",an1:"安",an3:"俺",an4:"按",en1:"恩",ang1:"骯",ang2:"昂",er2:"兒",er3:"耳",er4:"二"});
+for(const syl in NEUTRAL) CHAR[syl+"5"]=NEUTRAL[syl];
+
+function spell(i,f){
+  if(["j","q","x","y"].includes(i) && f.startsWith("ü")) return i+"u"+f.slice(1);
+  return i+f;
+}
+const COMBOS=[];
+for(const i of INITIALS)for(const f of VALID[i])for(let t=1;t<=5;t++){const c=CHAR[spell(i,f)+t];if(c)COMBOS.push({ini:i,fin:f,ton:t,ch:c})}
+
+const MARKS={a:"āáǎà",e:"ēéěè",i:"īíǐì",o:"ōóǒò",u:"ūúǔù","ü":"ǖǘǚǜ"};
+function addTone(s,t){
+  if(t===5) return s;
+  let idx=s.indexOf("a");
+  if(idx<0) idx=s.indexOf("e");
+  if(idx<0 && s.includes("ou")) idx=s.indexOf("o");
+  if(idx<0){for(let k=s.length-1;k>=0;k--) if("iouü".includes(s[k])){idx=k;break}}
+  if(idx<0) return s;
+  return s.slice(0,idx)+MARKS[s[idx]][t-1]+s.slice(idx+1);
+}
+
+const state={ini:null,fin:null,ton:null};
+let shown=false;
+
+function rule(i,f,t){
+  const out=[];
+  if(["j","q","x","y"].includes(i)&&f[0]==="ü") out.push(`After j, q, x and y, the two dots on ü are dropped: ${i} + ${f} → ${spell(i,f)}. It still sounds like ü.`);
+  if(["n","l"].includes(i)&&f[0]==="ü") out.push(`After n and l, ü keeps its dots, so ${i}ü is different from ${i}u.`);
+  if(i==="y"&&f==="e") out.push("ye sounds like ie.");
+  if(i==="y"&&f==="ou") out.push("you sounds like iou.");
+  if(i==="y"&&f==="ong") out.push("yong sounds like iong.");
+  if(i==="w"&&f==="ei") out.push("wei sounds like uei.");
+  if(i==="w"&&f==="en") out.push("wen sounds like uen.");
+  if(f==="ui") out.push("ui is the short form of uei.");
+  if(f==="iu") out.push("iu is the short form of iou.");
+  if(f==="un"&&i!=="w"&&!["j","q","x","y"].includes(i)) out.push("un here is the short form of uen.");
+  if(f==="i"&&["zh","ch","sh","r","z","c","s"].includes(i)) out.push(`In ${i}i, the i is not read like "ee". It just carries the sound of ${i}.`);
+  if(i===""&&f==="er") out.push("er always stands alone. It never takes an initial.");
+  else if(i==="") out.push("Blank initial: the syllable starts straight with the vowel.");
+  if(t===5) out.push("Neutral tone: no tone mark, read short and light.");
+  return out.join(" ");
+}
+
+function opts(which){
+  const vals=new Set();
+  for(const c of COMBOS){
+    if(which!=="ini"&&state.ini!=null&&c.ini!==state.ini) continue;
+    if(which!=="fin"&&state.fin!=null&&c.fin!==state.fin) continue;
+    if(which!=="ton"&&state.ton!=null&&c.ton!==state.ton) continue;
+    vals.add(c[which]);
+  }
+  return [...vals];
+}
+const pick=(arr,avoid)=>{const a=arr.length>1?arr.filter(x=>x!==avoid):arr;return a[Math.floor(Math.random()*a.length)]};
+
+function draw(which){state[which]=pick(opts(which),state[which]);shown=false;render(which)}
+function dealAll(){
+  const c=COMBOS[Math.floor(Math.random()*COMBOS.length)];
+  state.ini=c.ini;state.fin=c.fin;state.ton=c.ton;shown=false;render("ini","fin","ton");
+}
+function putBack(which){state[which]=null;shown=false;render()}
+function current(){return COMBOS.find(c=>c.ini===state.ini&&c.fin===state.fin&&c.ton===state.ton)}
+
+function cardHTML(which){
+  let big,sub;
+  if(which==="ini"){big=state.ini===""?'<span style="opacity:.3">—</span>':state.ini;sub=state.ini===""?"blank · 空白":"initial"}
+  if(which==="fin"){big=state.fin;sub="final"}
+  if(which==="ton"){const t=TONES[state.ton-1];big=t.mark;sub=t.label}
+  return `<div class="card"><span class="big">${big}</span><span class="sub">${sub}</span><button class="x" type="button" data-back="${which}" aria-label="Put card back">×</button></div>`;
+}
+const $=id=>document.getElementById(id);
+function render(...animate){
+  for(const w of ["ini","fin","ton"]){
+    const slot=$("slot-"+w);
+    if(state[w]==null){slot.innerHTML="empty";continue}
+    if(animate.includes(w)||!slot.querySelector(".card")) slot.innerHTML=cardHTML(w);
+  }
+  $("n-ini").textContent=opts("ini").length+" fit";
+  $("n-fin").textContent=opts("fin").length+" fit";
+  $("n-ton").textContent=opts("ton").length+" fit";
+
+  const chip=(w,txt,empty)=>`<span class="chip ${empty?"empty":""}" style="--c:var(--${w});--soft:var(--${w}-soft)">${txt}</span>`;
+  const iTxt=state.ini==null?"initial":(state.ini===""?"blank":state.ini);
+  const fTxt=state.fin==null?"final":state.fin;
+  const tTxt=state.ton==null?"tone":TONES[state.ton-1].mark+" "+state.ton;
+  $("eq").innerHTML=chip("ini",iTxt,state.ini==null)+'<span class="op">+</span>'+chip("fin",fTxt,state.fin==null)+'<span class="op">+</span>'+chip("ton",tTxt,state.ton==null);
+
+  const c=current();
+  $("reveal").hidden=$("speak").hidden=!c;
+  if(!c){$("answer").textContent="?";$("answer").classList.add("hidden");$("note").textContent="";$("example").innerHTML="";return}
+  $("answer").textContent=addTone(spell(c.ini,c.fin),c.ton);
+  $("answer").classList.toggle("hidden",!shown);
+  $("reveal").textContent=shown?"Hide answer":"Show answer";
+  $("example").innerHTML=shown?`Example 例字<b>${c.ch}</b>`:"";
+  $("note").textContent=shown?rule(c.ini,c.fin,c.ton):"";
+}
+
+/* Pronunciation: the device's Chinese text-to-speech reads the example character */
+let voices=[];
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+/* Rank voices: Taiwan first, then the clearer "Natural"/online neural voices */
+function score(v){let s=0;if(/zh[-_]TW/i.test(v.lang))s+=4;else if(/zh[-_]CN|cmn/i.test(v.lang))s+=2;if(/natural|online|neural/i.test(v.name))s+=5;if(/google/i.test(v.name))s+=2;return s}
+function loadVoices(){
+  try{voices=speechSynthesis.getVoices().filter(v=>/^(zh|cmn)/i.test(v.lang)&&!/HK|yue/i.test(v.lang)).sort((a,b)=>score(b)-score(a))}catch(e){voices=[]}
+  const sel=$("voice"),saved=store.get("voice");
+  if(!voices.length)return;
+  sel.innerHTML=voices.map(v=>`<option value="${v.name}">${v.name} (${v.lang})</option>`).join("");
+  if(saved&&voices.some(v=>v.name===saved))sel.value=saved;
+}
+if("speechSynthesis" in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
+{const r=store.get("rate");if(["0.2","0.4","0.6","0.8"].includes(r))$("rate").value=r;const t=store.get("twice");if(t)$("twice").checked=t==="1"}
+$("voice").onchange=e=>store.set("voice",e.target.value);
+$("rate").onchange=e=>store.set("rate",e.target.value);
+$("twice").onchange=e=>store.set("twice",e.target.checked?"1":"0");
+function say(text,v,rate,then){
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=v?v.lang:"zh-TW";if(v)u.voice=v;u.rate=rate;u.pitch=1;
+  if(then)u.onend=()=>setTimeout(then,800);
+  speechSynthesis.speak(u);
+}
+function speak(){
+  const c=current(); if(!c) return;
+  if(!("speechSynthesis" in window)){$("note").textContent="This browser has no speech feature. Try Chrome or Edge.";return}
+  if(!voices.length)loadVoices();
+  const v=voices.find(x=>x.name===$("voice").value)||voices[0];
+  const rate=parseFloat($("rate").value)||0.6;
+  speechSynthesis.cancel();
+  /* the full stop gives the voice a complete, falling sentence end, so short tones are not clipped */
+  const text=c.ch+"。";
+  say(text,v,rate,$("twice").checked?()=>say(text,v,rate):null);
+  if(!voices.length) $("note").textContent="No Chinese voice found on this device. Add Chinese (Taiwan) speech in your system language settings, then reload.";
+}
+
+$("deck-ini").onclick=()=>draw("ini");
+$("deck-fin").onclick=()=>draw("fin");
+$("deck-ton").onclick=()=>draw("ton");
+$("drawAll").onclick=dealAll;
+$("clear").onclick=()=>{state.ini=state.fin=state.ton=null;shown=false;render()};
+$("reveal").onclick=()=>{shown=!shown;render()};
+$("speak").onclick=speak;
+document.addEventListener("click",e=>{const b=e.target.closest("[data-back]");if(b)putBack(b.dataset.back)});
+
+// open with a sample hand: m + a + 3 → mǎ
+state.ini="m";state.fin="a";state.ton=3;render("ini","fin","ton");
+
+</script>
+
+</body>
+</html>
