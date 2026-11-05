@@ -140,7 +140,7 @@ button{font:inherit;cursor:pointer}
 
 <script>
 const G="a e u ai ei ao ou an en ang eng ong ua uo uai ui uan un uang";
-const JQX="i ü ia ie iao iu ian in iang ing iong üe üan ün";
+const JQX="i u ia ie iao iu ian in iang ing iong ue uan un";
 const VALID={
   b:"a o i u ai ei ao an en ang eng ie iao ian in ing",
   p:"a o i u ai ei ao ou an en ang eng ie iao ian in ing",
@@ -158,13 +158,13 @@ const VALID={
   z:"a e i u ai ei ao ou an en ang eng ong uo ui uan un",
   c:"a e i u ai ao ou an en ang eng ong uo ui uan un",
   s:"a e i u ai ao ou an en ang eng ong uo ui uan un",
-  y:"i in ing a e ao ou an ang ong ü üe üan ün",
+  y:"i in ing a e ao ou an ang ong u ue uan un",
   w:"u a o ai ei an en ang eng",
   "":"a o e ai ao ou an en ang er"
 };
 for(const k in VALID) VALID[k]=VALID[k].split(" ");
 const INITIALS=["b","p","m","f","d","t","n","l","g","k","h","j","q","x","zh","ch","sh","r","z","c","s","y","w",""];
-const FINALS=["a","o","e","i","u","ü","ai","ei","ao","ou","an","en","ang","eng","ong","er","ia","ie","iao","iu","ian","in","iang","ing","iong","ua","uo","uai","ui","uan","un","uang","üe","üan","ün"];
+const FINALS=["a","o","e","i","u","ü","ai","ei","ao","ou","an","en","ang","eng","ong","er","ia","ie","iao","iu","ian","in","iang","ing","iong","ua","uo","uai","ui","uan","un","uang","ue","üe"];
 const TONES=[
   {n:1,mark:"ˉ",label:"1st tone · 一聲"},{n:2,mark:"ˊ",label:"2nd tone · 二聲"},
   {n:3,mark:"ˇ",label:"3rd tone · 三聲"},{n:4,mark:"ˋ",label:"4th tone · 四聲"},
@@ -202,7 +202,6 @@ CHAR.a1="阿";CHAR.o1="喔";Object.assign(CHAR,{e2:"鵝",e3:"噁",e4:"餓",ai1:"
 for(const syl in NEUTRAL) CHAR[syl+"5"]=NEUTRAL[syl];
 
 function spell(i,f){
-  if(["j","q","x","y"].includes(i) && f.startsWith("ü")) return i+"u"+f.slice(1);
   return i+f;
 }
 const COMBOS=[];
@@ -224,7 +223,7 @@ let shown=false;
 
 function rule(i,f,t){
   const out=[];
-  if(["j","q","x","y"].includes(i)&&f[0]==="ü") out.push(`After j, q, x and y, the two dots on ü are dropped: ${i} + ${f} → ${spell(i,f)}. It still sounds like ü.`);
+  if(["j","q","x","y"].includes(i)&&["u","ue","uan","un"].includes(f)) out.push(`After j, q, x and y, this u is really ü. The two dots are left out in writing, but you still say ü.`);
   if(["n","l"].includes(i)&&f[0]==="ü") out.push(`After n and l, ü keeps its dots, so ${i}ü is different from ${i}u.`);
   if(i==="y"&&f==="e") out.push("ye sounds like ie.");
   if(i==="y"&&f==="ou") out.push("you sounds like iou.");
